@@ -1,2 +1,1 @@
-# finance_analysis
-analysis ETF or finance
+# How to use this bot
