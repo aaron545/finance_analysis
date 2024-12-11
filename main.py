@@ -5,6 +5,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+import mplcursors
 
 def fetch_twse_history(stock_code, date): # date format is "yyyymm01"
     url = "https://www.twse.com.tw/exchangeReport/STOCK_DAY"
@@ -66,7 +67,11 @@ def plot_data(data, stock_code):
     for i, row in data.iterrows():
         rect = Rectangle((i-0.4, row["Low"]), 0.8, row["High"] - row["Low"], color='gray', alpha=0.3)
         ax1.add_patch(rect)
-        ax1.text(i+0.2, row["Close"]+0.2, f'{row["Close"]:.2f}', ha='center', color='red')
+        # ax1.text(i+0.2, row["Close"]+0.2, f'{row["Close"]:.2f}', ha='center', color='red')
+
+    # Add hover tool to display data values
+    # mplcursors.cursor(ax1).connect("add", lambda sel: sel.annotation.set_text(f'{data["Close"].iloc[sel.index]:.2f}'))
+    mplcursors.cursor(ax1)
 
     ax1.set_title("Daily Closing Price with High-Low Range")
     ax1.set_xlabel("Date")
