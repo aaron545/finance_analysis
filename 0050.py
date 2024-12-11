@@ -48,19 +48,25 @@ def calculate_k_values(data, period=9, alpha=1/3):
     data["K"] = data["RSV"].ewm(alpha=alpha, adjust=False).mean()
     return data
 
-def plot_data(data):
+def plot_data(data, stock_code):
     # 转换日期为 Pandas 时间戳格式
-    data = data.dropna()
+    # data = data.dropna(ignore_index=True)
+    data = data.dropna().reset_index(drop=True)
+    # print(data)
     plt.figure(figsize=(12, 6))
 
-    # 第一张图：每天收盘价和区间
+    # Add main title for the plot
+    plt.suptitle(f"Stock Code: {stock_code}", fontsize=16)
+
+    # First subplot：每天收盘价和区间
     ax1 = plt.subplot(2, 1, 1)
     ax1.plot(data["Date"], data["Close"], label="Close Price", color="blue")
-
+    
     # Add high and low interval as rectangles
     for i, row in data.iterrows():
-        rect = Rectangle((i - 8.4, row["Low"]), 0.8, row["High"] - row["Low"], color='gray', alpha=0.3)
+        rect = Rectangle((i-0.4, row["Low"]), 0.8, row["High"] - row["Low"], color='gray', alpha=0.3)
         ax1.add_patch(rect)
+        ax1.text(i+0.2, row["Close"]+0.2, f'{row["Close"]:.2f}', ha='center', color='red')
 
     ax1.set_title("Daily Closing Price with High-Low Range")
     ax1.set_xlabel("Date")
@@ -81,7 +87,7 @@ def plot_data(data):
 
     # Ensure the x axis of the second plot matches that of the first plot
     ax2.set_xlim(ax1.get_xlim())
-    
+
     plt.setp(ax1.get_xticklabels(), rotation=45, ha="right")
     plt.setp(ax2.get_xticklabels(), rotation=45, ha="right")
     plt.tight_layout()
@@ -115,4 +121,4 @@ if history_data.tail(1)["Date"].iloc[0] != now_date:
 
 history_data = calculate_k_values(history_data)
 
-plot_data(history_data)
+plot_data(history_data, stock_code)
